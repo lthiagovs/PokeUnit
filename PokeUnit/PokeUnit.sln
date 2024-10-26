@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34714.143
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokeUnit.Infrastructure.MapEditor", "PokeUnit.Infrastructure.MapEditor\PokeUnit.Infrastructure.MapEditor.csproj", "{52BF39CB-66CC-4A90-B21B-99F1854A6899}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PokeUnit.Infrastructure.MapEditor", "PokeUnit.Infrastructure.MapEditor\PokeUnit.Infrastructure.MapEditor.csproj", "{52BF39CB-66CC-4A90-B21B-99F1854A6899}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "0 - Notes", "0 - Notes", "{380F0BD6-F47F-4065-A751-D765BBE11A17}"
 EndProject
@@ -17,6 +17,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4 - Infrastructure", "4 - I
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "5 - Test", "5 - Test", "{E85C7E53-F118-45EC-BBA3-BF38DDD7047E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokeUnit.Domain.Map", "PokeUnit.Domain.GameMap\PokeUnit.Domain.Map.csproj", "{B5E53616-BC11-4DC9-AF68-975C2BEFFA58}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokeUnit.Services.MapGenerator", "PokeUnit.Services.MapGenerator\PokeUnit.Services.MapGenerator.csproj", "{DC8914B1-57B4-49A5-BF62-D639A385669C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokeUnit.Services.MapManager", "PokeUnit.Services.MapManager\PokeUnit.Services.MapManager.csproj", "{85DAA3F5-6500-4FB5-94E8-3563688C2A22}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,12 +33,27 @@ Global
 		{52BF39CB-66CC-4A90-B21B-99F1854A6899}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{52BF39CB-66CC-4A90-B21B-99F1854A6899}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{52BF39CB-66CC-4A90-B21B-99F1854A6899}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5E53616-BC11-4DC9-AF68-975C2BEFFA58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5E53616-BC11-4DC9-AF68-975C2BEFFA58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5E53616-BC11-4DC9-AF68-975C2BEFFA58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5E53616-BC11-4DC9-AF68-975C2BEFFA58}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DC8914B1-57B4-49A5-BF62-D639A385669C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC8914B1-57B4-49A5-BF62-D639A385669C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC8914B1-57B4-49A5-BF62-D639A385669C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC8914B1-57B4-49A5-BF62-D639A385669C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{85DAA3F5-6500-4FB5-94E8-3563688C2A22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{85DAA3F5-6500-4FB5-94E8-3563688C2A22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{85DAA3F5-6500-4FB5-94E8-3563688C2A22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{85DAA3F5-6500-4FB5-94E8-3563688C2A22}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{52BF39CB-66CC-4A90-B21B-99F1854A6899} = {2433621D-2BDC-4F11-A3F2-AADF20FE5042}
+		{B5E53616-BC11-4DC9-AF68-975C2BEFFA58} = {B657E72D-40CC-4E9A-A4A8-5E88643FB94B}
+		{DC8914B1-57B4-49A5-BF62-D639A385669C} = {E2ABED19-22D6-49A4-8601-6964A33B3197}
+		{85DAA3F5-6500-4FB5-94E8-3563688C2A22} = {E2ABED19-22D6-49A4-8601-6964A33B3197}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3DBD8623-29D7-4EAC-A847-8BBBB0AFE83E}

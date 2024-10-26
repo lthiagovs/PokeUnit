@@ -1,6 +1,6 @@
 ﻿namespace PokeUnit.Infrastructure.MapEditor.Controls
 {
-    partial class MapTileControl
+    partial class GameElementControl
     {
         /// <summary> 
         /// Variável de designer necessária.
@@ -29,31 +29,43 @@
         private void InitializeComponent()
         {
             pbSprite = new PictureBox();
+            lbID = new Label();
             ((System.ComponentModel.ISupportInitialize)pbSprite).BeginInit();
             SuspendLayout();
             // 
             // pbSprite
             // 
-            pbSprite.Dock = DockStyle.Fill;
+            pbSprite.Dock = DockStyle.Left;
             pbSprite.Location = new Point(0, 0);
             pbSprite.Name = "pbSprite";
-            pbSprite.Size = new Size(96, 96);
+            pbSprite.Size = new Size(60, 58);
             pbSprite.TabIndex = 0;
             pbSprite.TabStop = false;
             pbSprite.Click += pbSprite_Click;
             pbSprite.MouseEnter += pbSprite_MouseEnter;
             pbSprite.MouseLeave += pbSprite_MouseLeave;
             // 
-            // MapTileControl
+            // lbID
+            // 
+            lbID.Dock = DockStyle.Fill;
+            lbID.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            lbID.Location = new Point(60, 0);
+            lbID.Name = "lbID";
+            lbID.Size = new Size(112, 58);
+            lbID.TabIndex = 1;
+            lbID.Text = "{ID}";
+            lbID.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // GameElementControl
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackColor = SystemColors.ActiveCaption;
             BorderStyle = BorderStyle.FixedSingle;
+            Controls.Add(lbID);
             Controls.Add(pbSprite);
             Cursor = Cursors.Hand;
-            Name = "MapTileControl";
-            Size = new Size(96, 96);
+            Name = "GameElementControl";
+            Size = new Size(172, 58);
             ((System.ComponentModel.ISupportInitialize)pbSprite).EndInit();
             ResumeLayout(false);
         }
@@ -61,5 +73,6 @@
         #endregion
 
         private PictureBox pbSprite;
+        private Label lbID;
     }
 }

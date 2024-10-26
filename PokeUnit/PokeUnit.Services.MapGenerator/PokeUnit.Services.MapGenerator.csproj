@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PokeUnit.Domain.GameMap\PokeUnit.Domain.Map.csproj" />
+    <ProjectReference Include="..\PokeUnit.Services.MapManager\PokeUnit.Services.MapManager.csproj" />
+  </ItemGroup>
+
+</Project>

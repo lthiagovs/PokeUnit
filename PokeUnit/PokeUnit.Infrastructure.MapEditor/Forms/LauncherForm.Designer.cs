@@ -31,7 +31,11 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LauncherForm));
             label1 = new Label();
             pbBackground = new PictureBox();
+            panel1 = new Panel();
+            btnStart = new Button();
+            label2 = new Label();
             ((System.ComponentModel.ISupportInitialize)pbBackground).BeginInit();
+            panel1.SuspendLayout();
             SuspendLayout();
             // 
             // label1
@@ -56,17 +60,52 @@
             pbBackground.TabIndex = 2;
             pbBackground.TabStop = false;
             // 
+            // panel1
+            // 
+            panel1.Controls.Add(btnStart);
+            panel1.Controls.Add(label2);
+            panel1.Dock = DockStyle.Bottom;
+            panel1.Location = new Point(0, 330);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(584, 31);
+            panel1.TabIndex = 3;
+            // 
+            // btnStart
+            // 
+            btnStart.Cursor = Cursors.Hand;
+            btnStart.Location = new Point(381, 3);
+            btnStart.Name = "btnStart";
+            btnStart.Size = new Size(200, 23);
+            btnStart.TabIndex = 1;
+            btnStart.Text = "Iniciar";
+            btnStart.UseVisualStyleBackColor = true;
+            btnStart.Click += btnStart_Click;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.ForeColor = Color.SteelBlue;
+            label2.Location = new Point(12, 7);
+            label2.Name = "label2";
+            label2.Size = new Size(215, 15);
+            label2.TabIndex = 0;
+            label2.Text = "https://github.com/lthiagovs/PokeUnit";
+            // 
             // LauncherForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(584, 361);
+            Controls.Add(panel1);
             Controls.Add(label1);
             Controls.Add(pbBackground);
             Name = "LauncherForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "LauncherForm";
+            Shown += LauncherForm_Shown;
             ((System.ComponentModel.ISupportInitialize)pbBackground).EndInit();
+            panel1.ResumeLayout(false);
+            panel1.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -74,5 +113,8 @@
 
         private Label label1;
         private PictureBox pbBackground;
+        private Panel panel1;
+        private Label label2;
+        private Button btnStart;
     }
 }

@@ -44,8 +44,9 @@
             panel3 = new Panel();
             button3 = new Button();
             button2 = new Button();
-            button1 = new Button();
+            btnNewMap = new Button();
             panel2 = new Panel();
+            pnElements = new Panel();
             pictureBox1 = new PictureBox();
             pnContent = new Panel();
             menuStrip1.SuspendLayout();
@@ -138,8 +139,8 @@
             // 
             panel3.Controls.Add(button3);
             panel3.Controls.Add(button2);
-            panel3.Controls.Add(button1);
-            panel3.Location = new Point(0, 0);
+            panel3.Controls.Add(btnNewMap);
+            panel3.Location = new Point(3, 0);
             panel3.Name = "panel3";
             panel3.Size = new Size(111, 36);
             panel3.TabIndex = 4;
@@ -164,25 +165,37 @@
             button2.TabIndex = 5;
             button2.UseVisualStyleBackColor = true;
             // 
-            // button1
+            // btnNewMap
             // 
-            button1.BackgroundImage = (Image)resources.GetObject("button1.BackgroundImage");
-            button1.BackgroundImageLayout = ImageLayout.Stretch;
-            button1.Location = new Point(3, 3);
-            button1.Name = "button1";
-            button1.Size = new Size(30, 30);
-            button1.TabIndex = 3;
-            button1.UseVisualStyleBackColor = true;
+            btnNewMap.BackgroundImage = (Image)resources.GetObject("btnNewMap.BackgroundImage");
+            btnNewMap.BackgroundImageLayout = ImageLayout.Stretch;
+            btnNewMap.Cursor = Cursors.Hand;
+            btnNewMap.Location = new Point(3, 3);
+            btnNewMap.Name = "btnNewMap";
+            btnNewMap.Size = new Size(30, 30);
+            btnNewMap.TabIndex = 3;
+            btnNewMap.UseVisualStyleBackColor = true;
+            btnNewMap.Click += btnNewMap_Click;
             // 
             // panel2
             // 
             panel2.BackColor = SystemColors.ButtonFace;
+            panel2.Controls.Add(pnElements);
             panel2.Controls.Add(pictureBox1);
             panel2.Dock = DockStyle.Left;
             panel2.Location = new Point(0, 60);
             panel2.Name = "panel2";
             panel2.Size = new Size(200, 390);
             panel2.TabIndex = 2;
+            // 
+            // pnElements
+            // 
+            pnElements.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            pnElements.BackColor = SystemColors.ActiveBorder;
+            pnElements.Location = new Point(12, 186);
+            pnElements.Name = "pnElements";
+            pnElements.Size = new Size(174, 201);
+            pnElements.TabIndex = 1;
             // 
             // pictureBox1
             // 
@@ -241,9 +254,10 @@
         private Panel panel3;
         private Button button3;
         private Button button2;
-        private Button button1;
+        private Button btnNewMap;
         private Panel panel2;
         private Panel pnContent;
         private PictureBox pictureBox1;
+        private Panel pnElements;
     }
 }
