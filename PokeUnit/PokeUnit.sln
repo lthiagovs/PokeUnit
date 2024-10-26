@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34714.143
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PokeUnit.Infrastructure.MapEditor", "PokeUnit.Infrastructure.MapEditor\PokeUnit.Infrastructure.MapEditor.csproj", "{52BF39CB-66CC-4A90-B21B-99F1854A6899}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "0 - Notes", "0 - Notes", "{380F0BD6-F47F-4065-A751-D765BBE11A17}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 - Presentation", "1 - Presentation", "{BA71ADB3-F94B-42F0-A45A-1815F8F0866F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2 - Domain", "2 - Domain", "{B657E72D-40CC-4E9A-A4A8-5E88643FB94B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3 - Services", "3 - Services", "{E2ABED19-22D6-49A4-8601-6964A33B3197}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4 - Infrastructure", "4 - Infrastructure", "{2433621D-2BDC-4F11-A3F2-AADF20FE5042}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "5 - Test", "5 - Test", "{E85C7E53-F118-45EC-BBA3-BF38DDD7047E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{52BF39CB-66CC-4A90-B21B-99F1854A6899}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52BF39CB-66CC-4A90-B21B-99F1854A6899}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52BF39CB-66CC-4A90-B21B-99F1854A6899}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52BF39CB-66CC-4A90-B21B-99F1854A6899}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{52BF39CB-66CC-4A90-B21B-99F1854A6899} = {2433621D-2BDC-4F11-A3F2-AADF20FE5042}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3DBD8623-29D7-4EAC-A847-8BBBB0AFE83E}
+	EndGlobalSection
+EndGlobal
