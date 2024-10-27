@@ -8,6 +8,8 @@ namespace PokeUnit.Infrastructure.MapEditor.Core
 
         public static GameMap? _loadedMap {  get; set; }
 
+        public static List<Image>? _loadedImages {  get; set; }
+
         public static GameMapElement? _selectedElement {  get; set; }
 
     }

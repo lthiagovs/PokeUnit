@@ -15,8 +15,8 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
     {
 
         private float scale = 1f;
-        private List<MapTileControl> tiles = new List<MapTileControl>();
-        private readonly int tileSize = 24;
+        private List<MapTile> tiles = new List<MapTile>();
+        private readonly int tileSize = 48;
         private bool isPainting = false;
 
         private void LoadTiles(int SizeX, int SizeY)
@@ -28,8 +28,9 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
                 for (int x = 0; x < SizeX; x++)
                 {
 
-                    MapTileControl tile = new MapTileControl(x,y);
-                    tile.Location = new Point(x * tile.Size.Width, y * tile.Size.Height);
+                    MapTile tile = new MapTile(x,y);
+                    tile.LocationX = x * tileSize;
+                    tile.LocationY = y * tileSize;
                     this.tiles.Add(tile);
 
                 }
@@ -68,11 +69,27 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
                 count++;
             }
 
+            LoadImages();
+
             return true;
         }
 
-        private void LoadMapTiles()
+        private bool LoadImages()
         {
+
+            if (EditorManager._loadedMap == null || EditorManager._loadedMap.Elements == null)
+                return false;
+
+            EditorManager._loadedImages = new List<Image>();
+
+            foreach (GameMapElement element in EditorManager._loadedMap.Elements)
+            {
+                Image? img = ElementManager.LoadElement(element.ID);
+                if (img != null)
+                    EditorManager._loadedImages.Add(img);
+            }
+
+            return true;
 
         }
 
@@ -100,6 +117,7 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
         {
             this.DoubleBuffered = true;
             InitializeComponent();
+            this.pnContent.BackColor = Color.Black;
             NewMap(20, 20);
         }
 
@@ -157,7 +175,7 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
 
             g.ScaleTransform(this.scale, this.scale);
 
-            foreach (MapTileControl tile in tiles)
+            foreach (MapTile tile in tiles)
             {
 
                 Rectangle rect = new Rectangle(
@@ -166,8 +184,8 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
                     (int)(tileSize * scale),
                     (int)(tileSize * scale)
                 );
-                if (tile.pbSprite.Image != null)
-                    g.DrawImage(tile.pbSprite.Image, rect);
+                if (tile.Sprite != null)
+                    g.DrawImage(tile.Sprite, rect);
                 else
                     g.FillRectangle(Brushes.Gray, rect);
             }
@@ -175,39 +193,33 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
 
         private void PaintTile(int X, int Y)
         {
-            float mouseX = (X / this.scale);
-            float mouseY = (Y / this.scale);
+            float mouseX = X / this.scale;
+            float mouseY = Y / this.scale;
 
+            float scaledTileSize = tileSize * scale; // Pre-calcula o tamanho do tile escalado
 
-            foreach (MapTileControl tile in tiles)
+            foreach (MapTile tile in tiles)
             {
-                RectangleF tileRect = new RectangleF(
-                    tile.PosX * scale * tileSize,
-                    tile.PosY * scale * tileSize,
-                    tileSize * scale,
-                    tileSize * scale
-                );
+                float tileX = tile.PosX * scaledTileSize;
+                float tileY = tile.PosY * scaledTileSize;
 
-                RectangleF tileRect2 = new RectangleF(
-                    tile.PosX * (scale * scale) * tileSize,
-                    tile.PosY * (scale * scale) * tileSize,
-                    tileSize * (scale * scale),
-                    tileSize * (scale * scale)
-                );
-
+                RectangleF tileRect = new RectangleF(tileX, tileY, scaledTileSize, scaledTileSize);
 
                 if (tileRect.Contains(mouseX, mouseY))
                 {
-
-                    if (EditorManager._selectedElement != null)
+                    if (EditorManager._selectedElement != null && EditorManager._loadedImages != null)
                     {
-                        EditorManager._loadedMap!.Data![tile.PosY][tile.PosX] = EditorManager._selectedElement.ID;
-                        tile._element = EditorManager._selectedElement;
-                        var image = ElementManager.LoadElement(EditorManager._selectedElement.ID);
-                        tile.SetImage(image);
 
-                        Region tileRegion = new Region(tileRect2);
-                        pnContent.Invalidate(tileRegion);
+                        EditorManager._loadedMap!.Data![tile.PosY][tile.PosX] = EditorManager._selectedElement.ID;
+                        tile.ElementID = EditorManager._selectedElement.ID;
+                        tile.Sprite = EditorManager._loadedImages[tile.ElementID];
+
+
+                        using (Graphics g = pnContent.CreateGraphics())
+                        {
+                            g.InterpolationMode = InterpolationMode.NearestNeighbor;
+                            g.DrawImage(tile.Sprite, tileRect);
+                        }
                     }
                     break;
                 }
