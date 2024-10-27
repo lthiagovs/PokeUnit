@@ -7,14 +7,22 @@ namespace PokeUnit.Infrastructure.MapEditor.Controls
     {
 
         public GameMapElement? _element { get; set; }
-        public int X { get; set; }
+        public int PosX { get; set; }
 
-        public int Y { get; set; }
+        public int PosY { get; set; }
 
-        public MapTileControl()
+        public MapTileControl(int PosX, int PosY)
         {
             InitializeComponent();
             this.BackColor = Color.CornflowerBlue;
+            this.PosX = PosX;
+            this.PosY = PosY;
+            if (EditorManager._loadedMap != null)
+            {
+                int elementIndex = EditorManager._loadedMap.Data[this.PosY][this.PosX];
+                this._element = EditorManager._loadedMap.Elements![elementIndex];
+                SetImage(ElementManager.LoadElement(elementIndex));
+            }
         }
 
         public void SetImage(Image? img)

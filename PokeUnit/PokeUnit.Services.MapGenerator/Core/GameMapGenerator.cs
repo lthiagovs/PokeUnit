@@ -63,6 +63,8 @@ namespace PokeUnit.Services.MapGenerator.Core
                 Description = "This map is empty for testing purposes.",
                 Elements = GenerateEmpytElements(),
                 Data = GenerateEmptyData(SizeX, SizeY),
+                SizeX = SizeX,
+                SizeY = SizeY
             };
 
             return newMap;
@@ -77,6 +79,8 @@ namespace PokeUnit.Services.MapGenerator.Core
                 Description = "This map is empty for testing purposes.",
                 Elements = GenerateElementsByRange(Range),
                 Data = GenerateEmptyData(SizeX, SizeY),
+                SizeX = SizeX,
+                SizeY = SizeY
             };
 
             return newMap;

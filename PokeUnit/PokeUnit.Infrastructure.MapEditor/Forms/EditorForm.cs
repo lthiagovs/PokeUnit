@@ -1,4 +1,6 @@
-﻿using PokeUnit.Domain.GameMap.Model;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using PokeUnit.Domain.GameMap.Model;
 using PokeUnit.Domain.Map.Model;
 using PokeUnit.Infrastructure.MapEditor.Controls;
 using PokeUnit.Infrastructure.MapEditor.Core;
@@ -26,11 +28,8 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
                 for (int x = 0; x < SizeX; x++)
                 {
 
-                    MapTileControl tile = new MapTileControl();
-                    tile.Y = y;
-                    tile.X = x;
+                    MapTileControl tile = new MapTileControl(x,y);
                     tile.Location = new Point(x * tile.Size.Width, y * tile.Size.Height);
-                    //this.pnContent.Controls.Add(tile);
                     this.tiles.Add(tile);
 
                 }
@@ -84,6 +83,17 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
             EditorManager._loadedMap = GameMapGenerator.GenerateEmptyMap(X, Y, 3);
             this.LoadElements();
             this.LoadTiles(X, Y);
+        }
+
+        private void LoadMap(GameMap map)
+        {
+            tiles.Clear();
+            this.pnElements.Controls.Clear();
+            EditorManager._loadedMap = map;
+            this.LoadElements();
+            this.LoadTiles(map.SizeX, map.SizeY);
+            this.pnContent.Invalidate();
+            this.pnElements.Invalidate();
         }
 
         public EditorForm()
@@ -142,7 +152,7 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
         private void pnContent_Paint(object sender, PaintEventArgs e)
         {
             Graphics g = e.Graphics;
-            g.SmoothingMode = SmoothingMode.None;
+            
             g.InterpolationMode = InterpolationMode.NearestNeighbor;
 
             g.ScaleTransform(this.scale, this.scale);
@@ -151,8 +161,8 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
             {
 
                 Rectangle rect = new Rectangle(
-                    (int)(tile.X * tileSize * scale),
-                    (int)(tile.Y * tileSize * scale),
+                    (int)(tile.PosX * tileSize * scale),
+                    (int)(tile.PosY * tileSize * scale),
                     (int)(tileSize * scale),
                     (int)(tileSize * scale)
                 );
@@ -172,15 +182,15 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
             foreach (MapTileControl tile in tiles)
             {
                 RectangleF tileRect = new RectangleF(
-                    tile.X * scale * tileSize,
-                    tile.Y * scale * tileSize,
+                    tile.PosX * scale * tileSize,
+                    tile.PosY * scale * tileSize,
                     tileSize * scale,
                     tileSize * scale
                 );
 
                 RectangleF tileRect2 = new RectangleF(
-                    tile.X * (scale * scale) * tileSize,
-                    tile.Y * (scale * scale) * tileSize,
+                    tile.PosX * (scale * scale) * tileSize,
+                    tile.PosY * (scale * scale) * tileSize,
                     tileSize * (scale * scale),
                     tileSize * (scale * scale)
                 );
@@ -191,7 +201,7 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
 
                     if (EditorManager._selectedElement != null)
                     {
-                        EditorManager._loadedMap!.Data![tile.Y][tile.X] = EditorManager._selectedElement.ID;
+                        EditorManager._loadedMap!.Data![tile.PosY][tile.PosX] = EditorManager._selectedElement.ID;
                         tile._element = EditorManager._selectedElement;
                         var image = ElementManager.LoadElement(EditorManager._selectedElement.ID);
                         tile.SetImage(image);
@@ -236,6 +246,39 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
             else
             {
                 MessageBox.Show("Load a map first...");
+            }
+        }
+
+        private void btnOpenMap_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    string filePath = openFileDialog.FileName;
+                    try
+                    {
+                        string jsonContent = File.ReadAllText(filePath);
+
+                        GameMap? openMap = JsonConvert.DeserializeObject<GameMap>(jsonContent);
+
+                        if (openMap != null)
+                        {
+                            MessageBox.Show("Map loaded!");
+                            LoadMap(openMap);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Error when loading map...");
+                        }
+
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error when opening the file: {ex.Message}", "Error:", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
             }
         }
     }

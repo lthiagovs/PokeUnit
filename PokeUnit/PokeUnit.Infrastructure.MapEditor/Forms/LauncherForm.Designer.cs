@@ -102,7 +102,6 @@
             Name = "LauncherForm";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "LauncherForm";
-            Shown += LauncherForm_Shown;
             ((System.ComponentModel.ISupportInitialize)pbBackground).EndInit();
             panel1.ResumeLayout(false);
             panel1.PerformLayout();

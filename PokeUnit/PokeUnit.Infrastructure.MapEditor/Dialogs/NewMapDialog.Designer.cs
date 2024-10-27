@@ -89,7 +89,7 @@
             label4.Name = "label4";
             label4.Size = new Size(14, 15);
             label4.TabIndex = 9;
-            label4.Text = "X";
+            label4.Text = "PosX";
             // 
             // label5
             // 
@@ -98,7 +98,7 @@
             label5.Name = "label5";
             label5.Size = new Size(14, 15);
             label5.TabIndex = 10;
-            label5.Text = "Y";
+            label5.Text = "PosY";
             // 
             // NewMapDialog
             // 

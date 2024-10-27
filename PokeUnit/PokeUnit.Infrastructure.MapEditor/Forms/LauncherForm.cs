@@ -5,27 +5,15 @@
 
         private Thread? editorThread { get; set; }
 
-        private void LoadEditor()
+        private void StartEditor()
         {
             this.editorThread = new Thread(() =>
             {
                 Application.Run(new EditorForm());
-                this.editorThread!.SetApartmentState(ApartmentState.STA);
             });
-        }
-
-        private void StartEditor()
-        {
-            if (this.editorThread != null)
-            {
-                this.editorThread.Start();
-                this.Close();
-            }
-            else
-            {
-                MessageBox.Show("Erro ao inicializar editor...");
-                this.Close();
-            }
+            this.editorThread.SetApartmentState(ApartmentState.STA);
+            this.editorThread.Start();
+            this.Close();
         }
 
         public LauncherForm()
@@ -38,11 +26,6 @@
         private void btnStart_Click(object sender, EventArgs e)
         {
             this.StartEditor();
-        }
-
-        private void LauncherForm_Shown(object sender, EventArgs e)
-        {
-            this.LoadEditor();
         }
     }
 }

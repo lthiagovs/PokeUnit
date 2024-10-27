@@ -43,7 +43,7 @@
             panel1 = new Panel();
             panel3 = new Panel();
             btnSaveMap = new Button();
-            button2 = new Button();
+            btnOpenMap = new Button();
             btnNewMap = new Button();
             panel2 = new Panel();
             pnElements = new Panel();
@@ -138,7 +138,7 @@
             // panel3
             // 
             panel3.Controls.Add(btnSaveMap);
-            panel3.Controls.Add(button2);
+            panel3.Controls.Add(btnOpenMap);
             panel3.Controls.Add(btnNewMap);
             panel3.Location = new Point(3, 0);
             panel3.Name = "panel3";
@@ -156,15 +156,16 @@
             btnSaveMap.UseVisualStyleBackColor = true;
             btnSaveMap.Click += btnSaveMap_Click;
             // 
-            // button2
+            // btnOpenMap
             // 
-            button2.BackgroundImage = (Image)resources.GetObject("button2.BackgroundImage");
-            button2.BackgroundImageLayout = ImageLayout.Stretch;
-            button2.Location = new Point(39, 3);
-            button2.Name = "button2";
-            button2.Size = new Size(30, 30);
-            button2.TabIndex = 5;
-            button2.UseVisualStyleBackColor = true;
+            btnOpenMap.BackgroundImage = (Image)resources.GetObject("btnOpenMap.BackgroundImage");
+            btnOpenMap.BackgroundImageLayout = ImageLayout.Stretch;
+            btnOpenMap.Location = new Point(39, 3);
+            btnOpenMap.Name = "btnOpenMap";
+            btnOpenMap.Size = new Size(30, 30);
+            btnOpenMap.TabIndex = 5;
+            btnOpenMap.UseVisualStyleBackColor = true;
+            btnOpenMap.Click += btnOpenMap_Click;
             // 
             // btnNewMap
             // 
@@ -258,7 +259,7 @@
         private Panel panel1;
         private Panel panel3;
         private Button btnSaveMap;
-        private Button button2;
+        private Button btnOpenMap;
         private Button btnNewMap;
         private Panel panel2;
         private Panel pnContent;

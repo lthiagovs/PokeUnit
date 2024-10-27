@@ -9,6 +9,10 @@ namespace PokeUnit.Domain.GameMap.Model
 
         public string Description { get; set; } = String.Empty;
 
+        public int SizeX {  get; set; }
+
+        public int SizeY { get; set; }
+
         public int[][]? Data { get; set; }
 
         public List<GameMapElement>? Elements { get; set; }
