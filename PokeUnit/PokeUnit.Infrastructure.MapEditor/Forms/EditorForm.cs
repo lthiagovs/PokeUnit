@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using PokeUnit.Domain.GameMap.Model;
 using PokeUnit.Domain.Map.Model;
 using PokeUnit.Infrastructure.MapEditor.Controls;
@@ -13,8 +12,11 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
 {
     public partial class EditorForm : Form
     {
-
+        private BufferedGraphicsContext? context;
+        private BufferedGraphics? bufferedGraphics;
         private float scale = 1f;
+        private int offsetX = 0;
+        private int offsetY = 0;
         private List<MapTile> tiles = new List<MapTile>();
         private readonly int tileSize = 48;
         private bool isPainting = false;
@@ -28,7 +30,7 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
                 for (int x = 0; x < SizeX; x++)
                 {
 
-                    MapTile tile = new MapTile(x,y);
+                    MapTile tile = new MapTile(x, y);
                     tile.LocationX = x * tileSize;
                     tile.LocationY = y * tileSize;
                     this.tiles.Add(tile);
@@ -95,15 +97,17 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
 
         private void NewMap(int X, int Y)
         {
+            ResetSettings();
             tiles.Clear();
-            this.pnContent.Invalidate();
             EditorManager._loadedMap = GameMapGenerator.GenerateEmptyMap(X, Y, 3);
             this.LoadElements();
             this.LoadTiles(X, Y);
+            this.pnContent.Invalidate();
         }
 
         private void LoadMap(GameMap map)
-        {
+        {            
+            ResetSettings();
             tiles.Clear();
             this.pnElements.Controls.Clear();
             EditorManager._loadedMap = map;
@@ -111,6 +115,21 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
             this.LoadTiles(map.SizeX, map.SizeY);
             this.pnContent.Invalidate();
             this.pnElements.Invalidate();
+            this.Cursor = Cursors.Default;
+        }
+
+        private void ResetSettings()
+        {
+            scale = 1f;
+            offsetX = 0;
+            offsetY = 0;
+        }
+
+        private void InitializeBufferedGraphics()
+        {
+            context = BufferedGraphicsManager.Current;
+            bufferedGraphics?.Dispose();
+            bufferedGraphics = context.Allocate(this.CreateGraphics(), this.DisplayRectangle);
         }
 
         public EditorForm()
@@ -119,6 +138,7 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
             InitializeComponent();
             this.pnContent.BackColor = Color.Black;
             NewMap(20, 20);
+            InitializeBufferedGraphics();
         }
 
         private void btnNewMap_Click(object sender, EventArgs e)
@@ -126,22 +146,50 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
             NewMapDialog dialog = new NewMapDialog();
             if (dialog.ShowDialog() == DialogResult.OK)
             {
+                this.Cursor = Cursors.WaitCursor;
                 int X = Convert.ToInt32(dialog.nSizeX.Value);
                 int Y = Convert.ToInt32(dialog.nSizeY.Value);
                 NewMap(X, Y);
             }
-
+            this.Cursor = Cursors.Default;
         }
 
         private void ZoomOut()
         {
             scale /= 2f;
+            InitializeBufferedGraphics();
             pnContent.Invalidate();
+            this.ActiveControl = null;
         }
 
         private void ZoomIn()
         {
             scale *= 2f;
+            InitializeBufferedGraphics();
+            pnContent.Invalidate();
+            this.ActiveControl = null;
+        }
+
+        private void MoveTiles(GameDirection direction)
+        {
+            switch (direction)
+            {
+                case GameDirection.Left:
+                    this.offsetX += tileSize;
+                    break;
+                case GameDirection.Right:
+                    this.offsetX -= tileSize;
+                    break;
+                case GameDirection.Up:
+                    this.offsetY += tileSize;
+                    break;
+                case GameDirection.Down:
+                    this.offsetY -= tileSize;
+                    break;
+                default:
+                    break;
+            }
+            InitializeBufferedGraphics();
             pnContent.Invalidate();
         }
 
@@ -151,14 +199,16 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
             switch (keyData)
             {
                 case Keys.Left:
-                    ZoomOut();
+                    MoveTiles(GameDirection.Left);
                     break;
                 case Keys.Right:
-                    ZoomIn();
+                    MoveTiles(GameDirection.Right);
                     break;
                 case Keys.Up:
+                    MoveTiles(GameDirection.Up);
                     break;
                 case Keys.Down:
+                    MoveTiles(GameDirection.Down);
                     break;
                 default:
                     break;
@@ -169,26 +219,28 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
 
         private void pnContent_Paint(object sender, PaintEventArgs e)
         {
-            Graphics g = e.Graphics;
-            
-            g.InterpolationMode = InterpolationMode.NearestNeighbor;
+            if (bufferedGraphics == null) return;
 
+            Graphics g = bufferedGraphics.Graphics;
+            g.Clear(Color.Black);
+            g.InterpolationMode = InterpolationMode.NearestNeighbor;
             g.ScaleTransform(this.scale, this.scale);
 
             foreach (MapTile tile in tiles)
             {
-
                 Rectangle rect = new Rectangle(
-                    (int)(tile.PosX * tileSize * scale),
-                    (int)(tile.PosY * tileSize * scale),
+                    (int)((tile.PosX * tileSize * scale) + offsetX),
+                    (int)((tile.PosY * tileSize * scale) + offsetY),
                     (int)(tileSize * scale),
                     (int)(tileSize * scale)
                 );
+
                 if (tile.Sprite != null)
                     g.DrawImage(tile.Sprite, rect);
                 else
                     g.FillRectangle(Brushes.Gray, rect);
             }
+            bufferedGraphics.Render(e.Graphics);
         }
 
         private void PaintTile(int X, int Y)
@@ -196,12 +248,12 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
             float mouseX = X / this.scale;
             float mouseY = Y / this.scale;
 
-            float scaledTileSize = tileSize * scale; // Pre-calcula o tamanho do tile escalado
+            float scaledTileSize = tileSize * scale;
 
             foreach (MapTile tile in tiles)
             {
-                float tileX = tile.PosX * scaledTileSize;
-                float tileY = tile.PosY * scaledTileSize;
+                float tileX = tile.PosX * scaledTileSize + offsetX;
+                float tileY = tile.PosY * scaledTileSize + offsetY;
 
                 RectangleF tileRect = new RectangleF(tileX, tileY, scaledTileSize, scaledTileSize);
 
@@ -209,6 +261,9 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
                 {
                     if (EditorManager._selectedElement != null && EditorManager._loadedImages != null)
                     {
+
+
+                        RectangleF tileRegion = new RectangleF(tileX * scale, tileY * scale, scaledTileSize * scale, scaledTileSize * scale);
 
                         EditorManager._loadedMap!.Data![tile.PosY][tile.PosX] = EditorManager._selectedElement.ID;
                         tile.ElementID = EditorManager._selectedElement.ID;
@@ -218,7 +273,7 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
                         using (Graphics g = pnContent.CreateGraphics())
                         {
                             g.InterpolationMode = InterpolationMode.NearestNeighbor;
-                            g.DrawImage(tile.Sprite, tileRect);
+                            g.DrawImage(tile.Sprite, tileRegion);
                         }
                     }
                     break;
@@ -244,6 +299,7 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
 
         private void btnSaveMap_Click(object sender, EventArgs e)
         {
+            this.Cursor = Cursors.WaitCursor;
             if (EditorManager._loadedMap != null)
             {
                 SaveMapDialog dialog = new SaveMapDialog();
@@ -259,10 +315,12 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
             {
                 MessageBox.Show("Load a map first...");
             }
+            this.Cursor = Cursors.Default;
         }
 
         private void btnOpenMap_Click(object sender, EventArgs e)
         {
+            this.Cursor = Cursors.WaitCursor;
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
                 openFileDialog.Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*";
@@ -292,6 +350,23 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
                     }
                 }
             }
+            this.Cursor = Cursors.Default;
+        }
+
+        private void btnZoomIn_Click(object sender, EventArgs e)
+        {
+            ZoomIn();
+        }
+
+        private void btnZoomOut_Click(object sender, EventArgs e)
+        {
+            ZoomOut();
+        }
+
+        private void pnContent_Resize(object sender, EventArgs e)
+        {
+            InitializeBufferedGraphics();
+            pnContent.Invalidate();
         }
     }
 }

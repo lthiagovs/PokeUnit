@@ -41,6 +41,9 @@
             windowToolStripMenuItem = new ToolStripMenuItem();
             helpToolStripMenuItem = new ToolStripMenuItem();
             panel1 = new Panel();
+            panel4 = new Panel();
+            btnZoomOut = new Button();
+            btnZoomIn = new Button();
             panel3 = new Panel();
             btnSaveMap = new Button();
             btnOpenMap = new Button();
@@ -51,6 +54,7 @@
             pnContent = new Panel();
             menuStrip1.SuspendLayout();
             panel1.SuspendLayout();
+            panel4.SuspendLayout();
             panel3.SuspendLayout();
             panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
@@ -128,12 +132,48 @@
             // panel1
             // 
             panel1.BackColor = SystemColors.ButtonFace;
+            panel1.Controls.Add(panel4);
             panel1.Controls.Add(panel3);
             panel1.Dock = DockStyle.Top;
             panel1.Location = new Point(0, 24);
             panel1.Name = "panel1";
             panel1.Size = new Size(800, 36);
             panel1.TabIndex = 1;
+            // 
+            // panel4
+            // 
+            panel4.Controls.Add(btnZoomOut);
+            panel4.Controls.Add(btnZoomIn);
+            panel4.Location = new Point(132, 0);
+            panel4.Margin = new Padding(15, 3, 3, 3);
+            panel4.Name = "panel4";
+            panel4.Size = new Size(74, 36);
+            panel4.TabIndex = 5;
+            // 
+            // btnZoomOut
+            // 
+            btnZoomOut.BackgroundImage = (Image)resources.GetObject("btnZoomOut.BackgroundImage");
+            btnZoomOut.BackgroundImageLayout = ImageLayout.Stretch;
+            btnZoomOut.Location = new Point(39, 3);
+            btnZoomOut.Name = "btnZoomOut";
+            btnZoomOut.Size = new Size(30, 30);
+            btnZoomOut.TabIndex = 5;
+            btnZoomOut.TabStop = false;
+            btnZoomOut.UseVisualStyleBackColor = true;
+            btnZoomOut.Click += btnZoomOut_Click;
+            // 
+            // btnZoomIn
+            // 
+            btnZoomIn.BackgroundImage = (Image)resources.GetObject("btnZoomIn.BackgroundImage");
+            btnZoomIn.BackgroundImageLayout = ImageLayout.Stretch;
+            btnZoomIn.Cursor = Cursors.Hand;
+            btnZoomIn.Location = new Point(3, 3);
+            btnZoomIn.Name = "btnZoomIn";
+            btnZoomIn.Size = new Size(30, 30);
+            btnZoomIn.TabIndex = 3;
+            btnZoomIn.TabStop = false;
+            btnZoomIn.UseVisualStyleBackColor = true;
+            btnZoomIn.Click += btnZoomIn_Click;
             // 
             // panel3
             // 
@@ -153,6 +193,7 @@
             btnSaveMap.Name = "btnSaveMap";
             btnSaveMap.Size = new Size(30, 30);
             btnSaveMap.TabIndex = 6;
+            btnSaveMap.TabStop = false;
             btnSaveMap.UseVisualStyleBackColor = true;
             btnSaveMap.Click += btnSaveMap_Click;
             // 
@@ -164,6 +205,7 @@
             btnOpenMap.Name = "btnOpenMap";
             btnOpenMap.Size = new Size(30, 30);
             btnOpenMap.TabIndex = 5;
+            btnOpenMap.TabStop = false;
             btnOpenMap.UseVisualStyleBackColor = true;
             btnOpenMap.Click += btnOpenMap_Click;
             // 
@@ -176,6 +218,7 @@
             btnNewMap.Name = "btnNewMap";
             btnNewMap.Size = new Size(30, 30);
             btnNewMap.TabIndex = 3;
+            btnNewMap.TabStop = false;
             btnNewMap.UseVisualStyleBackColor = true;
             btnNewMap.Click += btnNewMap_Click;
             // 
@@ -220,6 +263,7 @@
             pnContent.MouseDown += pnContent_MouseDown;
             pnContent.MouseMove += pnContent_MouseMove;
             pnContent.MouseUp += pnContent_MouseUp;
+            pnContent.Resize += pnContent_Resize;
             // 
             // EditorForm
             // 
@@ -236,6 +280,7 @@
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             panel1.ResumeLayout(false);
+            panel4.ResumeLayout(false);
             panel3.ResumeLayout(false);
             panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
@@ -265,5 +310,8 @@
         private Panel pnContent;
         private PictureBox pictureBox1;
         private Panel pnElements;
+        private Panel panel4;
+        private Button btnZoomOut;
+        private Button btnZoomIn;
     }
 }
