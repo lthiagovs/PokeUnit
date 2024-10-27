@@ -1,16 +1,19 @@
-﻿using PokeUnit.Domain.GameMap.Model;
-using PokeUnit.Domain.Map.Model;
+﻿using PokeUnit.Domain.Map.Model;
 using PokeUnit.Infrastructure.MapEditor.Controls;
 using PokeUnit.Infrastructure.MapEditor.Core;
 using PokeUnit.Infrastructure.MapEditor.Dialogs;
 using PokeUnit.Services.MapGenerator.Core;
+using System.Drawing.Drawing2D;
 
 namespace PokeUnit.Infrastructure.MapEditor.Forms
 {
     public partial class EditorForm : Form
     {
 
-        private GameMap? GameMap {  get; set; }
+        private float scale = 1f;
+        private List<MapTileControl> tiles = new List<MapTileControl>();
+        private readonly int tileSize = 24;
+        private bool isPainting = false;
 
         private void LoadTiles(int SizeX, int SizeY)
         {
@@ -22,8 +25,11 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
                 {
 
                     MapTileControl tile = new MapTileControl();
+                    tile.Y = y;
+                    tile.X = x;
                     tile.Location = new Point(x * tile.Size.Width, y * tile.Size.Height);
-                    this.pnContent.Controls.Add(tile);
+                    //this.pnContent.Controls.Add(tile);
+                    this.tiles.Add(tile);
 
                 }
 
@@ -33,7 +39,7 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
 
         private bool VerifyMap()
         {
-            return GameMap == null ? true : false;
+            return EditorManager._loadedMap == null ? true : false;
         }
 
         private bool LoadElements()
@@ -45,7 +51,7 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
                 return false;
             }
 
-            if(GameMap!.Elements == null)
+            if (EditorManager._loadedMap!.Elements == null)
             {
                 MessageBox.Show("Nenhum elemento carregado...");
                 return false;
@@ -53,10 +59,10 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
 
             int count = 0;
 
-            foreach(GameMapElement element in GameMap.Elements)
+            foreach (GameMapElement element in EditorManager._loadedMap.Elements)
             {
                 GameElementControl elementControl = new GameElementControl(element);
-                elementControl.Location = new Point(elementControl.Location.X, elementControl.Height * count );
+                elementControl.Location = new Point(elementControl.Location.X, elementControl.Height * count);
                 this.pnElements.Controls.Add(elementControl);
                 count++;
             }
@@ -64,29 +70,146 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
             return true;
         }
 
-        private void StartMapTiles()
+        private void LoadMapTiles()
         {
 
-            
+        }
 
-
+        private void NewMap()
+        {
+            EditorManager._loadedMap = GameMapGenerator.GenerateEmptyMap(8, 8, 3);
+            this.LoadElements();
         }
 
         public EditorForm()
         {
+            this.DoubleBuffered = true;
             InitializeComponent();
             LoadTiles(50, 50);
+            NewMap();
         }
 
         private void btnNewMap_Click(object sender, EventArgs e)
         {
             NewMapDialog dialog = new NewMapDialog();
-            if(dialog.ShowDialog() == DialogResult.OK)
+            if (dialog.ShowDialog() == DialogResult.OK)
             {
-                this.GameMap = GameMapGenerator.GenerateEmptyMap(50, 50);
-                this.LoadElements();
+                NewMap();
             }
 
+        }
+
+        private void ZoomOut()
+        {
+            scale /= 2f;
+            pnContent.Invalidate();
+        }
+
+        private void ZoomIn()
+        {
+            scale *= 2f;
+            pnContent.Invalidate();
+        }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+
+            switch (keyData)
+            {
+                case Keys.Left:
+                    ZoomOut();
+                    break;
+                case Keys.Right:
+                    ZoomIn();
+                    break;
+                case Keys.Up:
+                    break;
+                case Keys.Down:
+                    break;
+                default:
+                    break;
+            }
+
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        private void pnContent_Paint(object sender, PaintEventArgs e)
+        {
+            Graphics g = e.Graphics;
+            g.SmoothingMode = SmoothingMode.None;
+            g.InterpolationMode = InterpolationMode.NearestNeighbor;
+
+            g.ScaleTransform(this.scale, this.scale);
+
+            foreach (MapTileControl tile in tiles)
+            {
+
+                Rectangle rect = new Rectangle(
+                    (int)(tile.X * tileSize * scale),
+                    (int)(tile.Y * tileSize * scale),
+                    (int)(tileSize * scale),
+                    (int)(tileSize * scale)
+                );
+                if (tile.pbSprite.Image != null)
+                    g.DrawImage(tile.pbSprite.Image, rect);
+                else
+                    g.FillRectangle(Brushes.Gray, rect);
+            }
+        }
+
+        private void PaintTile(int X, int Y)
+        {
+            float mouseX = (X / this.scale);
+            float mouseY = (Y / this.scale);
+
+
+            foreach (MapTileControl tile in tiles)
+            {
+                RectangleF tileRect = new RectangleF(
+                    tile.X * scale * tileSize,
+                    tile.Y * scale * tileSize,
+                    tileSize * scale,
+                    tileSize * scale
+                );
+
+                RectangleF tileRect2 = new RectangleF(
+                    tile.X * (scale * scale) * tileSize,
+                    tile.Y * (scale * scale) * tileSize,
+                    tileSize * (scale * scale),
+                    tileSize * (scale * scale)
+                );
+
+
+                if (tileRect.Contains(mouseX, mouseY))
+                {
+
+                    if (EditorManager._selectedElement != null)
+                    {
+                        var image = ElementManager.LoadElement(EditorManager._selectedElement.ID);
+                        tile.SetImage(image);
+
+                        Region tileRegion = new Region(tileRect2);
+                        pnContent.Invalidate(tileRegion);
+                    }
+                    break;
+                }
+            }
+        }
+
+        private void pnContent_MouseDown(object sender, MouseEventArgs e)
+        {
+            this.isPainting = true;
+        }
+
+        private void pnContent_MouseUp(object sender, MouseEventArgs e)
+        {
+            this.isPainting = false;
+        }
+
+        private void pnContent_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (isPainting)
+                PaintTile(e.X, e.Y);
         }
     }
 }

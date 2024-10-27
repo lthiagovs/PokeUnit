@@ -214,6 +214,10 @@
             pnContent.Name = "pnContent";
             pnContent.Size = new Size(600, 390);
             pnContent.TabIndex = 3;
+            pnContent.Paint += pnContent_Paint;
+            pnContent.MouseDown += pnContent_MouseDown;
+            pnContent.MouseMove += pnContent_MouseMove;
+            pnContent.MouseUp += pnContent_MouseUp;
             // 
             // EditorForm
             // 

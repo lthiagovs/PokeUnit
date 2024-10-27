@@ -37,12 +37,9 @@
             pbSprite.Dock = DockStyle.Fill;
             pbSprite.Location = new Point(0, 0);
             pbSprite.Name = "pbSprite";
-            pbSprite.Size = new Size(96, 96);
+            pbSprite.Size = new Size(24, 24);
             pbSprite.TabIndex = 0;
             pbSprite.TabStop = false;
-            pbSprite.Click += pbSprite_Click;
-            pbSprite.MouseEnter += pbSprite_MouseEnter;
-            pbSprite.MouseLeave += pbSprite_MouseLeave;
             // 
             // MapTileControl
             // 
@@ -53,13 +50,13 @@
             Controls.Add(pbSprite);
             Cursor = Cursors.Hand;
             Name = "MapTileControl";
-            Size = new Size(96, 96);
+            Size = new Size(24, 24);
             ((System.ComponentModel.ISupportInitialize)pbSprite).EndInit();
             ResumeLayout(false);
         }
 
         #endregion
 
-        private PictureBox pbSprite;
+        public PictureBox pbSprite;
     }
 }
