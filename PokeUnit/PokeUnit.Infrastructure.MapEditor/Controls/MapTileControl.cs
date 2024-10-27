@@ -6,7 +6,7 @@ namespace PokeUnit.Infrastructure.MapEditor.Controls
     public partial class MapTileControl : UserControl
     {
 
-        private GameMapElement? _element { get; set; }
+        public GameMapElement? _element { get; set; }
         public int X { get; set; }
 
         public int Y { get; set; }

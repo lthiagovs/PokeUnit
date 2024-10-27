@@ -1,8 +1,10 @@
-﻿using PokeUnit.Domain.Map.Model;
+﻿using PokeUnit.Domain.GameMap.Model;
+using PokeUnit.Domain.Map.Model;
 using PokeUnit.Infrastructure.MapEditor.Controls;
 using PokeUnit.Infrastructure.MapEditor.Core;
 using PokeUnit.Infrastructure.MapEditor.Dialogs;
 using PokeUnit.Services.MapGenerator.Core;
+using PokeUnit.Services.MapManager.Core;
 using System.Drawing.Drawing2D;
 
 namespace PokeUnit.Infrastructure.MapEditor.Forms
@@ -75,18 +77,20 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
 
         }
 
-        private void NewMap()
+        private void NewMap(int X, int Y)
         {
-            EditorManager._loadedMap = GameMapGenerator.GenerateEmptyMap(8, 8, 3);
+            tiles.Clear();
+            this.pnContent.Invalidate();
+            EditorManager._loadedMap = GameMapGenerator.GenerateEmptyMap(X, Y, 3);
             this.LoadElements();
+            this.LoadTiles(X, Y);
         }
 
         public EditorForm()
         {
             this.DoubleBuffered = true;
             InitializeComponent();
-            LoadTiles(50, 50);
-            NewMap();
+            NewMap(20, 20);
         }
 
         private void btnNewMap_Click(object sender, EventArgs e)
@@ -94,7 +98,9 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
             NewMapDialog dialog = new NewMapDialog();
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                NewMap();
+                int X = Convert.ToInt32(dialog.nSizeX.Value);
+                int Y = Convert.ToInt32(dialog.nSizeY.Value);
+                NewMap(X, Y);
             }
 
         }
@@ -185,6 +191,8 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
 
                     if (EditorManager._selectedElement != null)
                     {
+                        EditorManager._loadedMap!.Data![tile.Y][tile.X] = EditorManager._selectedElement.ID;
+                        tile._element = EditorManager._selectedElement;
                         var image = ElementManager.LoadElement(EditorManager._selectedElement.ID);
                         tile.SetImage(image);
 
@@ -210,6 +218,25 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
         {
             if (isPainting)
                 PaintTile(e.X, e.Y);
+        }
+
+        private void btnSaveMap_Click(object sender, EventArgs e)
+        {
+            if (EditorManager._loadedMap != null)
+            {
+                SaveMapDialog dialog = new SaveMapDialog();
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    EditorManager._loadedMap.Name = dialog.txtName.Text;
+                    EditorManager._loadedMap.Description = dialog.txtDescription.Text;
+                    MapWriter.SaveMap(EditorManager._loadedMap);
+                    MessageBox.Show("Map saved!");
+                }
+            }
+            else
+            {
+                MessageBox.Show("Load a map first...");
+            }
         }
     }
 }

@@ -42,7 +42,7 @@
             helpToolStripMenuItem = new ToolStripMenuItem();
             panel1 = new Panel();
             panel3 = new Panel();
-            button3 = new Button();
+            btnSaveMap = new Button();
             button2 = new Button();
             btnNewMap = new Button();
             panel2 = new Panel();
@@ -137,7 +137,7 @@
             // 
             // panel3
             // 
-            panel3.Controls.Add(button3);
+            panel3.Controls.Add(btnSaveMap);
             panel3.Controls.Add(button2);
             panel3.Controls.Add(btnNewMap);
             panel3.Location = new Point(3, 0);
@@ -145,15 +145,16 @@
             panel3.Size = new Size(111, 36);
             panel3.TabIndex = 4;
             // 
-            // button3
+            // btnSaveMap
             // 
-            button3.BackgroundImage = (Image)resources.GetObject("button3.BackgroundImage");
-            button3.BackgroundImageLayout = ImageLayout.Stretch;
-            button3.Location = new Point(75, 3);
-            button3.Name = "button3";
-            button3.Size = new Size(30, 30);
-            button3.TabIndex = 6;
-            button3.UseVisualStyleBackColor = true;
+            btnSaveMap.BackgroundImage = (Image)resources.GetObject("btnSaveMap.BackgroundImage");
+            btnSaveMap.BackgroundImageLayout = ImageLayout.Stretch;
+            btnSaveMap.Location = new Point(75, 3);
+            btnSaveMap.Name = "btnSaveMap";
+            btnSaveMap.Size = new Size(30, 30);
+            btnSaveMap.TabIndex = 6;
+            btnSaveMap.UseVisualStyleBackColor = true;
+            btnSaveMap.Click += btnSaveMap_Click;
             // 
             // button2
             // 
@@ -256,7 +257,7 @@
         private ToolStripMenuItem helpToolStripMenuItem;
         private Panel panel1;
         private Panel panel3;
-        private Button button3;
+        private Button btnSaveMap;
         private Button button2;
         private Button btnNewMap;
         private Panel panel2;
