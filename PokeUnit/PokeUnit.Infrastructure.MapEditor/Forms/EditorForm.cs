@@ -1,25 +1,31 @@
 ﻿using Newtonsoft.Json;
 using PokeUnit.Domain.GameMap.Model;
+using PokeUnit.Domain.Map.Event;
 using PokeUnit.Domain.Map.Model;
 using PokeUnit.Infrastructure.MapEditor.Controls;
 using PokeUnit.Infrastructure.MapEditor.Core;
 using PokeUnit.Infrastructure.MapEditor.Dialogs;
+using PokeUnit.Infrastructure.MapEditor.Services;
 using PokeUnit.Services.MapGenerator.Core;
 using PokeUnit.Services.MapManager.Core;
 using System.Drawing.Drawing2D;
+using System.Runtime.CompilerServices;
 
 namespace PokeUnit.Infrastructure.MapEditor.Forms
 {
     public partial class EditorForm : Form
     {
-        private BufferedGraphicsContext? context;
-        private BufferedGraphics? bufferedGraphics;
+        private BufferedGraphicsContext? tilesBufferedContext;
+        private BufferedGraphics? tilesBufferedGraphics;
+        private BufferedGraphicsContext? mapBufferedContext;
+        private BufferedGraphics? mapBufferedGraphics;
         private float scale = 1f;
         private int offsetX = 0;
         private int offsetY = 0;
         private List<MapTile> tiles = new List<MapTile>();
         private readonly int tileSize = 48;
         private bool isPainting = false;
+        private readonly Color EventColor = Color.FromArgb(50, 0, 0, 255);
 
         private void LoadTiles(int SizeX, int SizeY)
         {
@@ -44,6 +50,18 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
         private bool VerifyMap()
         {
             return EditorManager._loadedMap == null ? true : false;
+        }
+
+        private bool IsMapLoaded()
+        {
+            return EditorManager._loadedMap != null ? true : false;
+        }
+
+        private bool IsEventsLoaded()
+        {
+            if (IsMapLoaded())
+                return EditorManager._loadedMap!.Events != null ? true : false;
+            return false;
         }
 
         private bool LoadElements()
@@ -99,14 +117,14 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
         {
             ResetSettings();
             tiles.Clear();
-            EditorManager._loadedMap = GameMapGenerator.GenerateEmptyMap(X, Y, 3);
+            EditorManager._loadedMap = GameMapGenerator.GenerateEmptyMap(X, Y, 8);
             this.LoadElements();
             this.LoadTiles(X, Y);
             this.pnContent.Invalidate();
         }
 
         private void LoadMap(GameMap map)
-        {            
+        {
             ResetSettings();
             tiles.Clear();
             this.pnElements.Controls.Clear();
@@ -123,13 +141,22 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
             scale = 1f;
             offsetX = 0;
             offsetY = 0;
+            InitializeMapBufferedGraphics();
+            pnMap.Invalidate();
         }
 
-        private void InitializeBufferedGraphics()
+        private void InitializeTilesBufferedGraphics()
         {
-            context = BufferedGraphicsManager.Current;
-            bufferedGraphics?.Dispose();
-            bufferedGraphics = context.Allocate(this.CreateGraphics(), this.DisplayRectangle);
+            tilesBufferedContext = BufferedGraphicsManager.Current;
+            tilesBufferedGraphics?.Dispose();
+            tilesBufferedGraphics = tilesBufferedContext.Allocate(this.CreateGraphics(), this.DisplayRectangle);
+        }
+
+        private void InitializeMapBufferedGraphics()
+        {
+            mapBufferedContext = BufferedGraphicsManager.Current;
+            mapBufferedGraphics?.Dispose();
+            mapBufferedGraphics = mapBufferedContext.Allocate(this.CreateGraphics(), this.DisplayRectangle);
         }
 
         public EditorForm()
@@ -138,7 +165,7 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
             InitializeComponent();
             this.pnContent.BackColor = Color.Black;
             NewMap(20, 20);
-            InitializeBufferedGraphics();
+            InitializeTilesBufferedGraphics();
         }
 
         private void btnNewMap_Click(object sender, EventArgs e)
@@ -157,7 +184,7 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
         private void ZoomOut()
         {
             scale /= 2f;
-            InitializeBufferedGraphics();
+            InitializeTilesBufferedGraphics();
             pnContent.Invalidate();
             this.ActiveControl = null;
         }
@@ -165,7 +192,7 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
         private void ZoomIn()
         {
             scale *= 2f;
-            InitializeBufferedGraphics();
+            InitializeTilesBufferedGraphics();
             pnContent.Invalidate();
             this.ActiveControl = null;
         }
@@ -189,7 +216,7 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
                 default:
                     break;
             }
-            InitializeBufferedGraphics();
+            InitializeTilesBufferedGraphics();
             pnContent.Invalidate();
         }
 
@@ -219,9 +246,11 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
 
         private void pnContent_Paint(object sender, PaintEventArgs e)
         {
-            if (bufferedGraphics == null) return;
+            if (tilesBufferedGraphics == null) return;
 
-            Graphics g = bufferedGraphics.Graphics;
+            if (!IsEventsLoaded()) return;
+
+            Graphics g = tilesBufferedGraphics.Graphics;
             g.Clear(Color.Black);
             g.InterpolationMode = InterpolationMode.NearestNeighbor;
             g.ScaleTransform(this.scale, this.scale);
@@ -235,12 +264,24 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
                     (int)(tileSize * scale)
                 );
 
+                GameEvent? findEvent = IsEvent(tile.PosX, tile.PosY);
+
                 if (tile.Sprite != null)
+                {
                     g.DrawImage(tile.Sprite, rect);
+                }
                 else
+                {
                     g.FillRectangle(Brushes.Gray, rect);
+                }
+
+                if (findEvent != null)
+                {
+                    g.FillRectangle(new SolidBrush(EventColor), rect);
+                }
+
             }
-            bufferedGraphics.Render(e.Graphics);
+            tilesBufferedGraphics.Render(e.Graphics);
         }
 
         private void PaintTile(int X, int Y)
@@ -264,26 +305,101 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
 
 
                         RectangleF tileRegion = new RectangleF(tileX * scale, tileY * scale, scaledTileSize * scale, scaledTileSize * scale);
+                        RectangleF mapRegion = new RectangleF(tile.PosX, tile.PosY, 1, 1);
 
                         EditorManager._loadedMap!.Data![tile.PosY][tile.PosX] = EditorManager._selectedElement.ID;
                         tile.ElementID = EditorManager._selectedElement.ID;
                         tile.Sprite = EditorManager._loadedImages[tile.ElementID];
 
+                        GameEvent? isEvent = IsEvent(tile.PosX, tile.PosY);
 
                         using (Graphics g = pnContent.CreateGraphics())
                         {
                             g.InterpolationMode = InterpolationMode.NearestNeighbor;
                             g.DrawImage(tile.Sprite, tileRegion);
+                            if (isEvent != null)
+                                g.FillRectangle(new SolidBrush(EventColor), mapRegion);
                         }
+
+                        using (Graphics g = pnMap.CreateGraphics())
+                        {
+                            g.InterpolationMode = InterpolationMode.NearestNeighbor;
+                            g.FillRectangle(GetBrush(tile.Sprite), mapRegion);
+                        }
+
+
                     }
                     break;
                 }
             }
         }
 
+        private GameEvent? IsEvent(int X, int Y)
+        {
+            if (!IsEventsLoaded())
+                return null;
+
+            return EditorManager._loadedMap!.Events!.FirstOrDefault(ev => ev.PosX == X && ev.PosY == Y);
+        }
+
+        private void CreateEvent(int X, int Y)
+        {
+
+            if (EditorManager._loadedMap == null || EditorManager._loadedMap.Events == null)
+            {
+                MessageBox.Show("Load a map first");
+                return;
+            }
+
+            float mouseX = X / this.scale;
+            float mouseY = Y / this.scale;
+
+            float scaledTileSize = tileSize * scale;
+
+            foreach (MapTile tile in tiles)
+            {
+                float tileX = tile.PosX * scaledTileSize + offsetX;
+                float tileY = tile.PosY * scaledTileSize + offsetY;
+
+                RectangleF tileRect = new RectangleF(tileX, tileY, scaledTileSize, scaledTileSize);
+
+                if (tileRect.Contains(mouseX, mouseY))
+                {
+
+
+                    MapEventDialog dialog = new MapEventDialog();
+                    if (dialog.ShowDialog() == DialogResult.OK)
+                    {
+
+                        RectangleF tileRegion = new RectangleF(tileX * scale, tileY * scale, scaledTileSize * scale, scaledTileSize * scale);
+
+                        using (Graphics g = pnContent.CreateGraphics())
+                        {
+                            g.InterpolationMode = InterpolationMode.NearestNeighbor;
+                            g.FillRectangle(new SolidBrush(EventColor), tileRegion);
+                        }
+
+                        GameEvent newEvent = new GameEvent();
+                        newEvent.ID = Convert.ToInt32(dialog.nbEvent.Value);
+                        newEvent.PosX = tile.PosX;
+                        newEvent.PosY = tile.PosY;
+                        EditorManager._loadedMap.Events.Add(newEvent);
+                        MessageBox.Show("Event created!");
+
+                    }
+
+                    break;
+
+                }
+            }
+        }
+
         private void pnContent_MouseDown(object sender, MouseEventArgs e)
         {
-            this.isPainting = true;
+            if (e.Button == MouseButtons.Right)
+                CreateEvent(e.X, e.Y);
+            else
+                this.isPainting = true;
         }
 
         private void pnContent_MouseUp(object sender, MouseEventArgs e)
@@ -365,8 +481,127 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
 
         private void pnContent_Resize(object sender, EventArgs e)
         {
-            InitializeBufferedGraphics();
+            InitializeTilesBufferedGraphics();
             pnContent.Invalidate();
+        }
+
+        private Color GetColorFromImage(Image img)
+        {
+            using (Bitmap bitmap = new Bitmap(img))
+            {
+                return bitmap.GetPixel(img.Width / 2, img.Height / 2);
+            }
+        }
+
+        private Color GetDominantColor(Image img)
+        {
+            Dictionary<Color, int> colorCount = new Dictionary<Color, int>();
+            using (Bitmap bitmap = new Bitmap(img))
+            {
+                for (int x = 0; x < bitmap.Width; x++)
+                {
+                    for (int y = 0; y < bitmap.Height; y++)
+                    {
+                        Color pixelColor = bitmap.GetPixel(x, y);
+
+                        if (pixelColor.A == 0) continue;
+
+                        // Contar a cor
+                        if (colorCount.ContainsKey(pixelColor))
+                        {
+                            colorCount[pixelColor]++;
+                        }
+                        else
+                        {
+                            colorCount[pixelColor] = 1;
+                        }
+                    }
+                }
+            }
+
+            Color dominantColor = Color.Empty;
+            int maxCount = 0;
+
+            foreach (var kvp in colorCount)
+            {
+                if (kvp.Value > maxCount)
+                {
+                    maxCount = kvp.Value;
+                    dominantColor = kvp.Key;
+                }
+            }
+
+            return dominantColor;
+        }
+
+        private SolidBrush GetBrush(Image img)
+        {
+            SolidBrush mapBrush;
+
+            if (EditorSettings.UserDominantColorOnMap)
+            {
+                mapBrush = new SolidBrush(GetDominantColor(img));
+            }
+            else
+            {
+                mapBrush = new SolidBrush(GetColorFromImage(img));
+            }
+
+            return mapBrush;
+        }
+
+        private void pnMap_Paint(object sender, PaintEventArgs e)
+        {
+            InitializeMapBufferedGraphics();
+            if (mapBufferedGraphics == null) return;
+
+            Graphics g = mapBufferedGraphics.Graphics;
+            g.Clear(Color.Black);
+            g.InterpolationMode = InterpolationMode.NearestNeighbor;
+            g.ScaleTransform(this.scale, this.scale);
+
+            foreach (MapTile tile in tiles)
+            {
+                Rectangle rect = new Rectangle(
+                    tile.PosX,
+                    tile.PosY,
+                    1,
+                    1
+                );
+
+                if (tile.Sprite != null)
+                {
+                    g.FillRectangle(GetBrush(tile.Sprite), rect);
+                }
+                else
+                {
+                    g.FillRectangle(Brushes.Black, rect);
+                }
+            }
+            mapBufferedGraphics.Render(e.Graphics);
+        }
+
+        private void UpdateAllSprites()
+        {
+
+            foreach(MapTile tile in tiles)
+            {
+                tile.Sprite = EditorManager._loadedImages[tile.ElementID];
+            }
+
+        }
+
+        private void btnAlien_Click(object sender, EventArgs e)
+        {
+            if(EditorManager._loadedImages == null)
+            {
+                MessageBox.Show("Load images first...");
+                return;
+            }
+            EditorManager._loadedImages = RandomNatureService.RandomizeNature(EditorManager._loadedImages);
+            UpdateAllSprites();
+            pnContent.Invalidate();
+            ResetSettings();
         }
     }
 }

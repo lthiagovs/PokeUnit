@@ -41,6 +41,10 @@
             windowToolStripMenuItem = new ToolStripMenuItem();
             helpToolStripMenuItem = new ToolStripMenuItem();
             panel1 = new Panel();
+            panel6 = new Panel();
+            btnAlien = new Button();
+            panel5 = new Panel();
+            btnEvent = new Button();
             panel4 = new Panel();
             btnZoomOut = new Button();
             btnZoomIn = new Button();
@@ -49,15 +53,17 @@
             btnOpenMap = new Button();
             btnNewMap = new Button();
             panel2 = new Panel();
+            pnMap = new Panel();
             pnElements = new Panel();
-            pictureBox1 = new PictureBox();
             pnContent = new Panel();
+            btnNoise = new Button();
             menuStrip1.SuspendLayout();
             panel1.SuspendLayout();
+            panel6.SuspendLayout();
+            panel5.SuspendLayout();
             panel4.SuspendLayout();
             panel3.SuspendLayout();
             panel2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             SuspendLayout();
             // 
             // menuStrip1
@@ -132,6 +138,8 @@
             // panel1
             // 
             panel1.BackColor = SystemColors.ButtonFace;
+            panel1.Controls.Add(panel6);
+            panel1.Controls.Add(panel5);
             panel1.Controls.Add(panel4);
             panel1.Controls.Add(panel3);
             panel1.Dock = DockStyle.Top;
@@ -139,6 +147,50 @@
             panel1.Name = "panel1";
             panel1.Size = new Size(800, 36);
             panel1.TabIndex = 1;
+            // 
+            // panel6
+            // 
+            panel6.Controls.Add(btnNoise);
+            panel6.Controls.Add(btnAlien);
+            panel6.Location = new Point(275, 0);
+            panel6.Margin = new Padding(15, 3, 3, 3);
+            panel6.Name = "panel6";
+            panel6.Size = new Size(74, 36);
+            panel6.TabIndex = 7;
+            // 
+            // btnAlien
+            // 
+            btnAlien.BackgroundImage = (Image)resources.GetObject("btnAlien.BackgroundImage");
+            btnAlien.BackgroundImageLayout = ImageLayout.Stretch;
+            btnAlien.Cursor = Cursors.Hand;
+            btnAlien.Location = new Point(3, 3);
+            btnAlien.Name = "btnAlien";
+            btnAlien.Size = new Size(30, 30);
+            btnAlien.TabIndex = 3;
+            btnAlien.TabStop = false;
+            btnAlien.UseVisualStyleBackColor = true;
+            btnAlien.Click += btnAlien_Click;
+            // 
+            // panel5
+            // 
+            panel5.Controls.Add(btnEvent);
+            panel5.Location = new Point(224, 0);
+            panel5.Margin = new Padding(15, 3, 3, 3);
+            panel5.Name = "panel5";
+            panel5.Size = new Size(37, 36);
+            panel5.TabIndex = 6;
+            // 
+            // btnEvent
+            // 
+            btnEvent.BackgroundImage = (Image)resources.GetObject("btnEvent.BackgroundImage");
+            btnEvent.BackgroundImageLayout = ImageLayout.Stretch;
+            btnEvent.Cursor = Cursors.Hand;
+            btnEvent.Location = new Point(3, 3);
+            btnEvent.Name = "btnEvent";
+            btnEvent.Size = new Size(30, 30);
+            btnEvent.TabIndex = 3;
+            btnEvent.TabStop = false;
+            btnEvent.UseVisualStyleBackColor = true;
             // 
             // panel4
             // 
@@ -225,13 +277,22 @@
             // panel2
             // 
             panel2.BackColor = SystemColors.ButtonFace;
+            panel2.Controls.Add(pnMap);
             panel2.Controls.Add(pnElements);
-            panel2.Controls.Add(pictureBox1);
             panel2.Dock = DockStyle.Left;
             panel2.Location = new Point(0, 60);
             panel2.Name = "panel2";
             panel2.Size = new Size(200, 390);
             panel2.TabIndex = 2;
+            // 
+            // pnMap
+            // 
+            pnMap.BackColor = SystemColors.ActiveCaptionText;
+            pnMap.Location = new Point(12, 6);
+            pnMap.Name = "pnMap";
+            pnMap.Size = new Size(174, 174);
+            pnMap.TabIndex = 2;
+            pnMap.Paint += pnMap_Paint;
             // 
             // pnElements
             // 
@@ -241,15 +302,6 @@
             pnElements.Name = "pnElements";
             pnElements.Size = new Size(174, 201);
             pnElements.TabIndex = 1;
-            // 
-            // pictureBox1
-            // 
-            pictureBox1.BackColor = SystemColors.ActiveCaptionText;
-            pictureBox1.Location = new Point(12, 6);
-            pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(174, 174);
-            pictureBox1.TabIndex = 0;
-            pictureBox1.TabStop = false;
             // 
             // pnContent
             // 
@@ -264,6 +316,18 @@
             pnContent.MouseMove += pnContent_MouseMove;
             pnContent.MouseUp += pnContent_MouseUp;
             pnContent.Resize += pnContent_Resize;
+            // 
+            // btnNoise
+            // 
+            btnNoise.BackgroundImage = (Image)resources.GetObject("btnNoise.BackgroundImage");
+            btnNoise.BackgroundImageLayout = ImageLayout.Stretch;
+            btnNoise.Cursor = Cursors.Hand;
+            btnNoise.Location = new Point(39, 3);
+            btnNoise.Name = "btnNoise";
+            btnNoise.Size = new Size(30, 30);
+            btnNoise.TabIndex = 4;
+            btnNoise.TabStop = false;
+            btnNoise.UseVisualStyleBackColor = true;
             // 
             // EditorForm
             // 
@@ -280,10 +344,11 @@
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             panel1.ResumeLayout(false);
+            panel6.ResumeLayout(false);
+            panel5.ResumeLayout(false);
             panel4.ResumeLayout(false);
             panel3.ResumeLayout(false);
             panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -308,10 +373,15 @@
         private Button btnNewMap;
         private Panel panel2;
         private Panel pnContent;
-        private PictureBox pictureBox1;
         private Panel pnElements;
         private Panel panel4;
         private Button btnZoomOut;
         private Button btnZoomIn;
+        private Panel pnMap;
+        private Panel panel5;
+        private Button btnEvent;
+        private Panel panel6;
+        private Button btnAlien;
+        private Button btnNoise;
     }
 }

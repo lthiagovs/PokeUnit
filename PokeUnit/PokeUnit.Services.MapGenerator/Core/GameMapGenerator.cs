@@ -1,4 +1,5 @@
 ﻿using PokeUnit.Domain.GameMap.Model;
+using PokeUnit.Domain.Map.Event;
 using PokeUnit.Domain.Map.Model;
 
 namespace PokeUnit.Services.MapGenerator.Core
@@ -64,7 +65,8 @@ namespace PokeUnit.Services.MapGenerator.Core
                 Elements = GenerateEmpytElements(),
                 Data = GenerateEmptyData(SizeX, SizeY),
                 SizeX = SizeX,
-                SizeY = SizeY
+                SizeY = SizeY,
+                Events = new List<GameEvent>(),
             };
 
             return newMap;
@@ -80,7 +82,8 @@ namespace PokeUnit.Services.MapGenerator.Core
                 Elements = GenerateElementsByRange(Range),
                 Data = GenerateEmptyData(SizeX, SizeY),
                 SizeX = SizeX,
-                SizeY = SizeY
+                SizeY = SizeY,
+                Events = new List<GameEvent>(),
             };
 
             return newMap;

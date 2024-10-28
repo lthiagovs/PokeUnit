@@ -1,4 +1,5 @@
-﻿using PokeUnit.Domain.Map.Model;
+﻿using PokeUnit.Domain.Map.Event;
+using PokeUnit.Domain.Map.Model;
 
 namespace PokeUnit.Domain.GameMap.Model
 {
@@ -16,6 +17,8 @@ namespace PokeUnit.Domain.GameMap.Model
         public int[][]? Data { get; set; }
 
         public List<GameMapElement>? Elements { get; set; }
+
+        public List<GameEvent>? Events {  get; set; }
 
     }
 

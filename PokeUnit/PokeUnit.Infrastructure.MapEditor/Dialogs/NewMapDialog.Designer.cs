@@ -71,6 +71,7 @@
             // nSizeX
             // 
             nSizeX.Location = new Point(16, 61);
+            nSizeX.Maximum = new decimal(new int[] { 173, 0, 0, 0 });
             nSizeX.Name = "nSizeX";
             nSizeX.Size = new Size(71, 23);
             nSizeX.TabIndex = 7;
@@ -78,6 +79,7 @@
             // nSizeY
             // 
             nSizeY.Location = new Point(92, 61);
+            nSizeY.Maximum = new decimal(new int[] { 173, 0, 0, 0 });
             nSizeY.Name = "nSizeY";
             nSizeY.Size = new Size(71, 23);
             nSizeY.TabIndex = 8;
@@ -87,7 +89,7 @@
             label4.AutoSize = true;
             label4.Location = new Point(16, 43);
             label4.Name = "label4";
-            label4.Size = new Size(14, 15);
+            label4.Size = new Size(33, 15);
             label4.TabIndex = 9;
             label4.Text = "PosX";
             // 
@@ -96,7 +98,7 @@
             label5.AutoSize = true;
             label5.Location = new Point(93, 43);
             label5.Name = "label5";
-            label5.Size = new Size(14, 15);
+            label5.Size = new Size(33, 15);
             label5.TabIndex = 10;
             label5.Text = "PosY";
             // 
