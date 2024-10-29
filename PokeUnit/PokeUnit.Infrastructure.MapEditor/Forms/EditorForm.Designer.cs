@@ -42,6 +42,7 @@
             helpToolStripMenuItem = new ToolStripMenuItem();
             panel1 = new Panel();
             panel6 = new Panel();
+            btnNoise = new Button();
             btnAlien = new Button();
             panel5 = new Panel();
             btnEvent = new Button();
@@ -56,7 +57,6 @@
             pnMap = new Panel();
             pnElements = new Panel();
             pnContent = new Panel();
-            btnNoise = new Button();
             menuStrip1.SuspendLayout();
             panel1.SuspendLayout();
             panel6.SuspendLayout();
@@ -157,6 +157,19 @@
             panel6.Name = "panel6";
             panel6.Size = new Size(74, 36);
             panel6.TabIndex = 7;
+            // 
+            // btnNoise
+            // 
+            btnNoise.BackgroundImage = (Image)resources.GetObject("btnNoise.BackgroundImage");
+            btnNoise.BackgroundImageLayout = ImageLayout.Stretch;
+            btnNoise.Cursor = Cursors.Hand;
+            btnNoise.Location = new Point(39, 3);
+            btnNoise.Name = "btnNoise";
+            btnNoise.Size = new Size(30, 30);
+            btnNoise.TabIndex = 4;
+            btnNoise.TabStop = false;
+            btnNoise.UseVisualStyleBackColor = true;
+            btnNoise.Click += btnNoise_Click;
             // 
             // btnAlien
             // 
@@ -297,6 +310,7 @@
             // pnElements
             // 
             pnElements.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            pnElements.AutoScroll = true;
             pnElements.BackColor = SystemColors.ActiveBorder;
             pnElements.Location = new Point(12, 186);
             pnElements.Name = "pnElements";
@@ -316,18 +330,6 @@
             pnContent.MouseMove += pnContent_MouseMove;
             pnContent.MouseUp += pnContent_MouseUp;
             pnContent.Resize += pnContent_Resize;
-            // 
-            // btnNoise
-            // 
-            btnNoise.BackgroundImage = (Image)resources.GetObject("btnNoise.BackgroundImage");
-            btnNoise.BackgroundImageLayout = ImageLayout.Stretch;
-            btnNoise.Cursor = Cursors.Hand;
-            btnNoise.Location = new Point(39, 3);
-            btnNoise.Name = "btnNoise";
-            btnNoise.Size = new Size(30, 30);
-            btnNoise.TabIndex = 4;
-            btnNoise.TabStop = false;
-            btnNoise.UseVisualStyleBackColor = true;
             // 
             // EditorForm
             // 

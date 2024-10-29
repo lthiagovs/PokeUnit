@@ -12,7 +12,6 @@ namespace PokeUnit.Infrastructure.MapEditor.Controls
         {
             InitializeComponent();
             this._element = element;
-            this.lbID.Text = element.ID.ToString();
             this.pbSprite.Image = ElementManager.LoadElement(this._element.ID);
             this.pbSprite.SizeMode = PictureBoxSizeMode.StretchImage;
         }

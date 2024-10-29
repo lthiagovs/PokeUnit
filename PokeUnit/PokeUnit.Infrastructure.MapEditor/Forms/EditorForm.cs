@@ -26,6 +26,7 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
         private readonly int tileSize = 48;
         private bool isPainting = false;
         private readonly Color EventColor = Color.FromArgb(50, 0, 0, 255);
+        private int range = 8;
 
         private void LoadTiles(int SizeX, int SizeY)
         {
@@ -117,7 +118,7 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
         {
             ResetSettings();
             tiles.Clear();
-            EditorManager._loadedMap = GameMapGenerator.GenerateEmptyMap(X, Y, 8);
+            EditorManager._loadedMap = GameMapGenerator.GenerateEmptyMap(X, Y, range);
             this.LoadElements();
             this.LoadTiles(X, Y);
             this.pnContent.Invalidate();
@@ -581,10 +582,22 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
             mapBufferedGraphics.Render(e.Graphics);
         }
 
+        private void UpdateAllIndex()
+        {
+            if (EditorManager._loadedMap == null || EditorManager._loadedMap.Data == null) return;
+
+            foreach (MapTile tile in tiles)
+            {
+                tile.ElementID = EditorManager._loadedMap.Data[tile.PosY][tile.PosX];
+            }
+        }
+
         private void UpdateAllSprites()
         {
 
-            foreach(MapTile tile in tiles)
+            if (EditorManager._loadedImages == null) return;
+
+            foreach (MapTile tile in tiles)
             {
                 tile.Sprite = EditorManager._loadedImages[tile.ElementID];
             }
@@ -593,7 +606,7 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
 
         private void btnAlien_Click(object sender, EventArgs e)
         {
-            if(EditorManager._loadedImages == null)
+            if (EditorManager._loadedImages == null)
             {
                 MessageBox.Show("Load images first...");
                 return;
@@ -602,6 +615,41 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
             UpdateAllSprites();
             pnContent.Invalidate();
             ResetSettings();
+        }
+
+        private void btnNoise_Click(object sender, EventArgs e)
+        {
+            MapNoiseDialog dialog = new MapNoiseDialog();
+
+            if (dialog.ShowDialog() == DialogResult.Cancel) return;
+
+            if (EditorManager._loadedMap == null || EditorManager._loadedMap.Data == null) return;
+
+            switch (dialog.cbNoiseType.SelectedIndex)
+            {
+                case 0:
+                    MapNoiseService.ApplySimpleNoise(EditorManager._loadedMap.Data, range);
+                    break;
+                case 1:
+                    MapNoiseService.ApplySmoothNoise(EditorManager._loadedMap.Data, range);
+                    break;
+                case 2:
+                    MapNoiseService.ApplyDiamondSquare(EditorManager._loadedMap.Data, range);
+                    break;
+                case 3:
+                    MapNoiseService.ApplyPerlinNoise(EditorManager._loadedMap.Data, range);
+                    break;
+                case 4:
+                    double frequency = Convert.ToDouble(dialog.nbFrequency.Value);
+                    double amplitude = Convert.ToDouble(dialog.nbAmplitude.Value);
+                    MapNoiseService.ApplyWaveNoise(EditorManager._loadedMap.Data, range, frequency, amplitude);
+                    break;
+            }
+            UpdateAllIndex();
+            UpdateAllSprites();
+            ResetSettings();
+            pnContent.Invalidate();
+
         }
     }
 }
