@@ -41,6 +41,8 @@
             windowToolStripMenuItem = new ToolStripMenuItem();
             helpToolStripMenuItem = new ToolStripMenuItem();
             panel1 = new Panel();
+            panel7 = new Panel();
+            btnBorders = new Button();
             panel6 = new Panel();
             btnNoise = new Button();
             btnAlien = new Button();
@@ -59,6 +61,7 @@
             pnContent = new Panel();
             menuStrip1.SuspendLayout();
             panel1.SuspendLayout();
+            panel7.SuspendLayout();
             panel6.SuspendLayout();
             panel5.SuspendLayout();
             panel4.SuspendLayout();
@@ -138,6 +141,7 @@
             // panel1
             // 
             panel1.BackColor = SystemColors.ButtonFace;
+            panel1.Controls.Add(panel7);
             panel1.Controls.Add(panel6);
             panel1.Controls.Add(panel5);
             panel1.Controls.Add(panel4);
@@ -147,6 +151,28 @@
             panel1.Name = "panel1";
             panel1.Size = new Size(800, 36);
             panel1.TabIndex = 1;
+            // 
+            // panel7
+            // 
+            panel7.Controls.Add(btnBorders);
+            panel7.Location = new Point(363, 0);
+            panel7.Margin = new Padding(15, 3, 3, 3);
+            panel7.Name = "panel7";
+            panel7.Size = new Size(74, 36);
+            panel7.TabIndex = 8;
+            // 
+            // btnBorders
+            // 
+            btnBorders.BackgroundImage = (Image)resources.GetObject("btnBorders.BackgroundImage");
+            btnBorders.BackgroundImageLayout = ImageLayout.Stretch;
+            btnBorders.Cursor = Cursors.Hand;
+            btnBorders.Location = new Point(3, 3);
+            btnBorders.Name = "btnBorders";
+            btnBorders.Size = new Size(30, 30);
+            btnBorders.TabIndex = 3;
+            btnBorders.TabStop = false;
+            btnBorders.UseVisualStyleBackColor = true;
+            btnBorders.Click += btnBorders_Click;
             // 
             // panel6
             // 
@@ -346,6 +372,7 @@
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             panel1.ResumeLayout(false);
+            panel7.ResumeLayout(false);
             panel6.ResumeLayout(false);
             panel5.ResumeLayout(false);
             panel4.ResumeLayout(false);
@@ -385,5 +412,7 @@
         private Panel panel6;
         private Button btnAlien;
         private Button btnNoise;
+        private Panel panel7;
+        private Button btnBorders;
     }
 }

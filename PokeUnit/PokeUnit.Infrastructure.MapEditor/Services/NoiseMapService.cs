@@ -118,22 +118,74 @@
             return data[x][y];
         }
 
-        public static void ApplyPerlinNoise(int[][] data, int range)
+        public static void ApplyPerlinNoise(int[][] data, int range, double frequency, double amplitude)
         {
-            Random random = new Random();
-            double frequency = 0.1;
-            double amplitude = range / 2.0;
+            int width = data.Length;
+            int height = data[0].Length;
 
-            for (int i = 0; i < data.Length; i++)
+            Random random = new Random();
+            double offsetX = random.NextDouble() * 1000;
+            double offsetY = random.NextDouble() * 1000;
+
+            for (int x = 0; x < width; x++)
             {
-                for (int j = 0; j < data[i].Length; j++)
+                for (int y = 0; y < height; y++)
                 {
-                    double noiseValue = (Math.Sin(i * frequency) + Math.Cos(j * frequency)) * amplitude;
-                    data[i][j] = Math.Clamp((int)(noiseValue + random.Next(-range / 4, range / 4)), 0, range - 1);
+                    double nx = (x + offsetX) * frequency;
+                    double ny = (y + offsetY) * frequency;
+                    double noiseValue = Perlin(nx, ny) * amplitude;
+
+                    // Ajusta o valor do noise para ficar dentro do intervalo 0 - range
+                    int terrainValue = (int)((noiseValue + 1) / 2 * range);
+                    data[x][y] = Math.Clamp(terrainValue, 0, range - 1);
                 }
             }
         }
 
+        private static double Perlin(double x, double y)
+        {
+            // Calcula os pontos da grade
+            int x0 = (int)Math.Floor(x);
+            int x1 = x0 + 1;
+            int y0 = (int)Math.Floor(y);
+            int y1 = y0 + 1;
+
+            // Fator de interpolação
+            double sx = x - x0;
+            double sy = y - y0;
+
+            // Gradientes pseudoaleatórios para cada ponto da grade
+            double n0 = DotGridGradient(x0, y0, x, y);
+            double n1 = DotGridGradient(x1, y0, x, y);
+            double ix0 = Lerp(n0, n1, sx);
+
+            n0 = DotGridGradient(x0, y1, x, y);
+            n1 = DotGridGradient(x1, y1, x, y);
+            double ix1 = Lerp(n0, n1, sx);
+
+            return Lerp(ix0, ix1, sy);
+        }
+
+        private static double DotGridGradient(int ix, int iy, double x, double y)
+        {
+            // Vetores gradiente aleatórios para cada ponto
+            Random random = new Random(ix * 73856093 ^ iy * 19349663);
+            double angle = random.NextDouble() * Math.PI * 2;
+            double gradientX = Math.Cos(angle);
+            double gradientY = Math.Sin(angle);
+
+            // Vetor de distância
+            double dx = x - ix;
+            double dy = y - iy;
+
+            return (dx * gradientX + dy * gradientY);
+        }
+
+        private static double Lerp(double a, double b, double t)
+        {
+            return a + t * (b - a);
+        }
+        
         public static void ApplyWaveNoise(int[][] data, int range, double frequency, double amplitude)
         {
             int width = data.Length;

@@ -9,7 +9,6 @@ using PokeUnit.Infrastructure.MapEditor.Services;
 using PokeUnit.Services.MapGenerator.Core;
 using PokeUnit.Services.MapManager.Core;
 using System.Drawing.Drawing2D;
-using System.Runtime.CompilerServices;
 
 namespace PokeUnit.Infrastructure.MapEditor.Forms
 {
@@ -26,7 +25,7 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
         private readonly int tileSize = 48;
         private bool isPainting = false;
         private readonly Color EventColor = Color.FromArgb(50, 0, 0, 255);
-        private int range = 8;
+        private int range = 2;
 
         private void LoadTiles(int SizeX, int SizeY)
         {
@@ -176,7 +175,7 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
             {
                 this.Cursor = Cursors.WaitCursor;
                 int X = Convert.ToInt32(dialog.nSizeX.Value);
-                int Y = Convert.ToInt32(dialog.nSizeY.Value);
+                int Y = Convert.ToInt32(dialog.nSizeX.Value);
                 NewMap(X, Y);
             }
             this.Cursor = Cursors.Default;
@@ -313,6 +312,12 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
                         tile.Sprite = EditorManager._loadedImages[tile.ElementID];
 
                         GameEvent? isEvent = IsEvent(tile.PosX, tile.PosY);
+
+                        //TEST
+                        Image? brush = ElementManager.CheckBrush(EditorManager._selectedElement.ID, tile.PosX, tile.PosY);
+                        if (brush != null)
+                            tile.Sprite = brush;
+                        //TEST
 
                         using (Graphics g = pnContent.CreateGraphics())
                         {
@@ -604,6 +609,22 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
 
         }
 
+        private void ChechAllBrushes()
+        {
+            foreach (MapTile tile in tiles)
+            {
+
+                Image? brush = ElementManager.CheckBrush(tile.ElementID, tile.PosX, tile.PosY);
+
+                if (brush != null)
+                    tile.Sprite = brush;
+
+            }
+            pnContent.Invalidate();
+            ResetSettings();
+
+        }
+
         private void btnAlien_Click(object sender, EventArgs e)
         {
             if (EditorManager._loadedImages == null)
@@ -611,7 +632,8 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
                 MessageBox.Show("Load images first...");
                 return;
             }
-            EditorManager._loadedImages = RandomNatureService.RandomizeNature(EditorManager._loadedImages);
+            //EditorManager._loadedImages = RandomNatureService.RandomizeNature(EditorManager._loadedImages);
+            EditorManager._loadedImages = RandomNatureService.RandomizeNature(EditorManager._loadedMap);
             UpdateAllSprites();
             pnContent.Invalidate();
             ResetSettings();
@@ -625,6 +647,9 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
 
             if (EditorManager._loadedMap == null || EditorManager._loadedMap.Data == null) return;
 
+            double frequency = Convert.ToDouble(dialog.nbFrequency.Value);
+            double amplitude = Convert.ToDouble(dialog.nbAmplitude.Value);
+
             switch (dialog.cbNoiseType.SelectedIndex)
             {
                 case 0:
@@ -637,11 +662,9 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
                     MapNoiseService.ApplyDiamondSquare(EditorManager._loadedMap.Data, range);
                     break;
                 case 3:
-                    MapNoiseService.ApplyPerlinNoise(EditorManager._loadedMap.Data, range);
+                    MapNoiseService.ApplyPerlinNoise(EditorManager._loadedMap.Data, range, frequency, amplitude);
                     break;
                 case 4:
-                    double frequency = Convert.ToDouble(dialog.nbFrequency.Value);
-                    double amplitude = Convert.ToDouble(dialog.nbAmplitude.Value);
                     MapNoiseService.ApplyWaveNoise(EditorManager._loadedMap.Data, range, frequency, amplitude);
                     break;
             }
@@ -650,6 +673,11 @@ namespace PokeUnit.Infrastructure.MapEditor.Forms
             ResetSettings();
             pnContent.Invalidate();
 
+        }
+
+        private void btnBorders_Click(object sender, EventArgs e)
+        {
+            ChechAllBrushes();
         }
     }
 }

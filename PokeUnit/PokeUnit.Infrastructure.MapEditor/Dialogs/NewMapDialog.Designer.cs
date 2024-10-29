@@ -32,11 +32,8 @@
             btnCancel = new Button();
             label1 = new Label();
             nSizeX = new NumericUpDown();
-            nSizeY = new NumericUpDown();
             label4 = new Label();
-            label5 = new Label();
             ((System.ComponentModel.ISupportInitialize)nSizeX).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)nSizeY).BeginInit();
             SuspendLayout();
             // 
             // btnCreate
@@ -73,34 +70,17 @@
             nSizeX.Location = new Point(16, 61);
             nSizeX.Maximum = new decimal(new int[] { 173, 0, 0, 0 });
             nSizeX.Name = "nSizeX";
-            nSizeX.Size = new Size(71, 23);
+            nSizeX.Size = new Size(147, 23);
             nSizeX.TabIndex = 7;
-            // 
-            // nSizeY
-            // 
-            nSizeY.Location = new Point(92, 61);
-            nSizeY.Maximum = new decimal(new int[] { 173, 0, 0, 0 });
-            nSizeY.Name = "nSizeY";
-            nSizeY.Size = new Size(71, 23);
-            nSizeY.TabIndex = 8;
             // 
             // label4
             // 
             label4.AutoSize = true;
             label4.Location = new Point(16, 43);
             label4.Name = "label4";
-            label4.Size = new Size(33, 15);
+            label4.Size = new Size(73, 15);
             label4.TabIndex = 9;
-            label4.Text = "PosX";
-            // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.Location = new Point(93, 43);
-            label5.Name = "label5";
-            label5.Size = new Size(33, 15);
-            label5.TabIndex = 10;
-            label5.Text = "PosY";
+            label4.Text = "Size (square)";
             // 
             // NewMapDialog
             // 
@@ -108,9 +88,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = SystemColors.ActiveCaption;
             ClientSize = new Size(175, 167);
-            Controls.Add(label5);
             Controls.Add(label4);
-            Controls.Add(nSizeY);
             Controls.Add(nSizeX);
             Controls.Add(label1);
             Controls.Add(btnCancel);
@@ -119,7 +97,6 @@
             StartPosition = FormStartPosition.CenterParent;
             Text = "New Map";
             ((System.ComponentModel.ISupportInitialize)nSizeX).EndInit();
-            ((System.ComponentModel.ISupportInitialize)nSizeY).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -130,8 +107,6 @@
         private Button btnCancel;
         private Label label1;
         public NumericUpDown nSizeX;
-        public NumericUpDown nSizeY;
         private Label label4;
-        private Label label5;
     }
 }
